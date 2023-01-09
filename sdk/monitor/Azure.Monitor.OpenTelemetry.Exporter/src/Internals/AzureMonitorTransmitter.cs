@@ -38,12 +38,12 @@ namespace Azure.Monitor.OpenTelemetry.Exporter
             }
 
             options.Retry.MaxRetries = 0;
-            ConnectionStringParser.GetValues(options.ConnectionString, out _instrumentationKey, out string ingestionEndpoint);
+            ConnectionStringParser.GetValues(options.ConnectionString, out _instrumentationKey, out string ingestionEndpoint, out string aadAudience);
 
             HttpPipeline pipeline = null;
             if (credential != null)
             {
-                pipeline = HttpPipelineBuilder.Build(options, new HttpPipelinePolicy[] { new BearerTokenAuthenticationPolicy(credential, "https://monitor.azure.com//.default") });
+                pipeline = HttpPipelineBuilder.Build(options, new HttpPipelinePolicy[] { new BearerTokenAuthenticationPolicy(credential, aadAudience ?? Constants.DefaultAADAudience) });
                 AzureMonitorExporterEventSource.Log.WriteInformational("SetAADCredentialsToPipeline", "HttpPipelineBuilder is built with AAD Credentials");
             }
             else
