@@ -4,4 +4,5 @@
 using System.Reflection;
 using Azure.Test.Perf;
 
-await PerfProgram.Main(Assembly.GetExecutingAssembly(), args);
+// await PerfProgram.Main(Assembly.GetExecutingAssembly(), args);
+BenchmarkDotNet.Running.BenchmarkRunner.Run<Azure.Core.Perf.FastPropertyBagBenchmark>();

@@ -20,6 +20,8 @@ namespace Azure.Core
         /// by external code. See the <see cref="TelemetryDetails"/> and <see cref="UserAgentValueKey"/> types for an example of this usage.
         /// </summary>
         private Dictionary<Type, object>? _typeProperties;
+        private PunyDictionary _punyDictionary = new PunyDictionary();
+        private PunyDictionaryArray _punyDictionaryArray = new PunyDictionaryArray();
 
         private Response? _response;
 
@@ -182,6 +184,52 @@ namespace Azure.Core
         }
 
         /// <summary>
+        /// Gets a property that is stored with this <see cref="HttpMessage"/> instance and can be used for modifying pipeline behavior.
+        /// </summary>
+        /// <param name="type">The property type.</param>
+        /// <param name="value">The property value.</param>
+        /// <returns><c>true</c> if property exists, otherwise. <c>false</c>.</returns>
+        public bool TryGetPropertyFast(Type type, out object? value)
+        {
+            value = null;
+            return _punyDictionary.TryGetValue(type, out value) == true;
+        }
+
+        /// <summary>
+        /// Sets a property that is stored with this <see cref="HttpMessage"/> instance and can be used for modifying pipeline behavior.
+        /// Internal properties can be keyed with internal types to prevent external code from overwriting these values.
+        /// </summary>
+        /// <param name="type">The key for the value.</param>
+        /// <param name="value">The property value.</param>
+        public void SetPropertyFast(Type type, object value)
+        {
+            _punyDictionary.Add(type, value);
+        }
+
+        /// <summary>
+        /// Gets a property that is stored with this <see cref="HttpMessage"/> instance and can be used for modifying pipeline behavior.
+        /// </summary>
+        /// <param name="type">The property type.</param>
+        /// <param name="value">The property value.</param>
+        /// <returns><c>true</c> if property exists, otherwise. <c>false</c>.</returns>
+        public bool TryGetPropertyFast2(Type type, out object? value)
+        {
+            value = null;
+            return _punyDictionaryArray.TryGetValue(type, out value) == true;
+        }
+
+        /// <summary>
+        /// Sets a property that is stored with this <see cref="HttpMessage"/> instance and can be used for modifying pipeline behavior.
+        /// Internal properties can be keyed with internal types to prevent external code from overwriting these values.
+        /// </summary>
+        /// <param name="type">The key for the value.</param>
+        /// <param name="value">The property value.</param>
+        public void SetPropertyFast2(Type type, object value)
+        {
+            _punyDictionaryArray.Add(type, value);
+        }
+
+        /// <summary>
         /// Returns the response content stream and releases it ownership to the caller. After calling this methods using <see cref="Azure.Response.ContentStream"/> or <see cref="Azure.Response.Content"/> would result in exception.
         /// </summary>
         /// <returns>The content stream or null if response didn't have any.</returns>
@@ -262,6 +310,6 @@ namespace Azure.Core
         /// <summary>
         /// Exists as a private key entry into the <see cref="HttpMessage._typeProperties"/> dictionary for stashing string keyed entries in the Type keyed dictionary.
         /// </summary>
-        private class MessagePropertyKey {}
+        private class MessagePropertyKey { }
     }
 }
