@@ -21,7 +21,7 @@ namespace Azure.Core
         /// </summary>
         private Dictionary<Type, object>? _typeProperties;
         private PunyDictionary _punyDictionary = new PunyDictionary();
-        private PunyDictionaryArray _punyDictionaryArray = new PunyDictionaryArray();
+        private ArrayBackedPropertyBag<long,object> _punyDictionaryArray = new();
 
         private Response? _response;
 
@@ -145,7 +145,7 @@ namespace Azure.Core
         /// <param name="value">The property value.</param>
         public void SetProperty(string name, object value)
         {
-            _typeProperties ??= new Dictionary<Type, object>();
+            _typeProperties ??= new Dictionary<Type, object>(40);
             Dictionary<string, object> properties;
             if (!_typeProperties.TryGetValue(typeof(MessagePropertyKey), out var rawValue))
             {
@@ -215,7 +215,7 @@ namespace Azure.Core
         public bool TryGetPropertyFast2(Type type, out object? value)
         {
             value = null;
-            return _punyDictionaryArray.TryGetValue(type, out value) == true;
+            return _punyDictionaryArray.TryGetValue((long)type.TypeHandle.Value, out value) == true;
         }
 
         /// <summary>
@@ -226,7 +226,7 @@ namespace Azure.Core
         /// <param name="value">The property value.</param>
         public void SetPropertyFast2(Type type, object value)
         {
-            _punyDictionaryArray.Add(type, value);
+            _punyDictionaryArray.Add((long)type.TypeHandle.Value, value);
         }
 
         /// <summary>
