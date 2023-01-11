@@ -20,7 +20,6 @@ namespace Azure.Core
         /// by external code. See the <see cref="TelemetryDetails"/> and <see cref="UserAgentValueKey"/> types for an example of this usage.
         /// </summary>
         private Dictionary<Type, object>? _typeProperties;
-        private PunyDictionary _punyDictionary = new PunyDictionary();
         private ArrayBackedPropertyBag<long,object> _punyDictionaryArray = new();
 
         private Response? _response;
@@ -181,29 +180,6 @@ namespace Azure.Core
         {
             _typeProperties ??= new Dictionary<Type, object>();
             _typeProperties[type] = value;
-        }
-
-        /// <summary>
-        /// Gets a property that is stored with this <see cref="HttpMessage"/> instance and can be used for modifying pipeline behavior.
-        /// </summary>
-        /// <param name="type">The property type.</param>
-        /// <param name="value">The property value.</param>
-        /// <returns><c>true</c> if property exists, otherwise. <c>false</c>.</returns>
-        public bool TryGetPropertyFast(Type type, out object? value)
-        {
-            value = null;
-            return _punyDictionary.TryGetValue(type, out value) == true;
-        }
-
-        /// <summary>
-        /// Sets a property that is stored with this <see cref="HttpMessage"/> instance and can be used for modifying pipeline behavior.
-        /// Internal properties can be keyed with internal types to prevent external code from overwriting these values.
-        /// </summary>
-        /// <param name="type">The key for the value.</param>
-        /// <param name="value">The property value.</param>
-        public void SetPropertyFast(Type type, object value)
-        {
-            _punyDictionary.Add(type, value);
         }
 
         /// <summary>
